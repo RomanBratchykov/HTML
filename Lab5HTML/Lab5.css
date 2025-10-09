@@ -1,0 +1,117 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
+  grid-auto-flow: dense;
+  gap: 2px;
+  background-color: #eee;
+  padding: 0;
+}
+
+.grid-itemA {
+  display: flex;
+  background-color: plum;
+  color: white;
+  font-size: 20px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+}
+
+.grid-itemB {
+  display: flex;
+  background-color: orange;
+  color: black;
+  font-size: 20px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  grid-row: span 2;
+}
+.grid-itemC {
+  display:flex;
+  background-color: orange;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+ 
+}
+.grid-itemD {
+  display:flex;
+  background-color: plum;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  grid-row: span 2;
+  grid-column: span 2;
+}
+.grid-itemE {
+  display:flex;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+}
+.grid-itemF {
+  display:flex;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+}
+.grid-itemG {
+ display:flex;
+  background-color: #8cff53;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  grid-column: span 2;
+}
+.grid-itemH {
+ display:flex;
+  background-color: #8cff53;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  grid-column:span 3;
+  grid-column: span 2;
+}
+.grid-itemI {
+  display:flex;
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  justify-content: center;    
+  align-items: center;     
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  
+
+}
