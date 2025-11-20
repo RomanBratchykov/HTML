@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Comic Vault — Сховище Коміксів</title>
+    <!-- Favicon Placeholder (Критерій 2.4) -->
+    <link rel="icon" href="https://placehold.co/16x16/E30022/FFD700?text=C" type="image/x-icon">
+    <!-- Мета-теги (Критерій 2.4) -->
+    <meta name="description" content="Найкращий вибір коміксів, графічних романів та манги. Фільтри за ціною, автором та жанром.">
+    <meta name="keywords" content="комікси, магазин, манга, супергерої, DC, Marvel, графічні романи">
+
+    <!-- Bootstrap 5.3 CSS (Критерій 2.1) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Google Font Link (Comic Style: Bangers) - Додавання нового шрифту (Критерій 2.3) -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <!-- Додатковий шрифт для тексту в бульбашці -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Організація CSS: CSS Custom Properties (Змінні) (Критерій 1.2) */
+        :root {
+            --primary: #E30022; /* Коміксний Червоний/Акцент */
+            --secondary: #222244; /* Темно-синій/Основний фон */
+            --accent: #FFD700; /* Золотий/Виділення */
+            --background-light: #F8F8FF; /* Світлий фон контенту */
+            --font-family-sans-serif: 'Inter', sans-serif;
+            --font-family-comic: 'Bangers', cursive; /* Додаємо новий коміксний шрифт */
+            --font-family-speech: 'Roboto Mono', monospace; /* Шрифт для мовленнєвої бульбашки */
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: white;
+            font-family: var(--font-family-sans-serif); /* Основний текст залишаємо читабельним */
+        }
+
+        /* Новий стиль для заголовків H1, H2, H3, щоб вони були коміксними */
+        h1, h2, h3, .display-4 {
+            font-family: var(--font-family-comic);
+            letter-spacing: 1.5px; /* Для кращого вигляду коміксного шрифту */
+        }
+
+        /* Загальний UI/UX: Плавні переходи (Критерій 3.3) */
+        .btn, .nav-link, .card, a {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #A30018; /* Темніший червоний */
+            border-color: #A30018;
+            transform: translateY(-2px);
+        }
+
+        .card-comic {
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background-color: white;
+            color: var(--secondary);
+        }
+
+        .card-comic:hover {
+            box-shadow: 0 8px 16px rgba(227, 0, 34, 0.7); /* Тінь кольору primary */
+            transform: scale(1.02);
+        }
+        
+        /* Спеціальний стиль для фільтрів */
+        .filter-group-header {
+            cursor: pointer;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* СТИЛІ ДЛЯ СЕКЦІЇ ГЕРОЯ */
+        .comic-hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, #a30018 100%); /* Градієнтний фон */
+            border: 5px solid var(--accent);
+            overflow: hidden; /* Обрізає зайве, якщо герой виходить за межі */
+            position: relative;
+        }
+
+        /* Стилі для бульбашки з мовою */
+        .speech-bubble {
+            background: white;
+            border: 4px solid var(--secondary);
+            border-radius: 40px;
+            padding: 20px;
+            text-align: center;
+            font-family: var(--font-family-speech);
+            color: var(--secondary);
+            font-weight: 700;
+            position: relative;
+            box-shadow: 4px 4px 0px var(--secondary); /* Коміксна тінь */
+        }
+        
+        .speech-bubble-text {
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        /* Адаптивне позиціонування бульбашки */
+
+        /* Загальний стиль: На мобільних бульбашка зверху */
+        .hero-bubble-container {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             text-align: center;
+        }
+        
+        /* Десктопний стиль (з lg): бульбашка поруч з героєм */
+        @media (min-width: 992px) {
+            .hero-bubble-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Семантика HTML5) -->
+    <header class="bg-dark sticky-top border-bottom border-4 border-danger shadow-lg">
+        <div class="container-fluid p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 fw-bold text-warning mb-0">СХОВИЩЕ КОМІКСІВ</h1>
+                <!-- Навігація (Семантика HTML5) -->
+                <nav class="d-none d-md-block">
+                    <ul class="nav">
+                        <li class="nav-item"><a class="nav-link text-white hover-primary" href="#">Головна</a></li>
+                        <li class="nav-item"><a class="nav-link text-white hover-primary" href="#">Новинки</a></li>
+                        <li class="nav-item"><a class="nav-link text-white hover-primary" href="#">Акції</a></li>
+                        <li class="nav-item"><a class="nav-link text-white hover-primary" href="#">Контакти</a></li>
+                        <li class="nav-item">
+                            <!-- Кнопка для Модального вікна авторизації (Критерій 3.1) -->
+                            <button type="button" class="btn btn-sm btn-outline-warning ms-3" data-bs-toggle="modal" data-bs-target="#authModal">
+                                Увійти
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- Кнопка-гамбургер для мобільного меню (прихована) -->
+                <button class="d-md-none btn btn-outline-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav" aria-controls="offcanvasNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Мобильне Offcanvas-меню для навігації -->
+    <div class="offcanvas offcanvas-start bg-secondary" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title text-warning" id="offcanvasNavLabel">Меню</h5>
+        <button type="button" class="btn-close text-reset bg-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link text-white fs-5" href="#">Головна</a></li>
+            <li class="nav-item"><a class="nav-link text-white fs-5" href="#">Новинки</a></li>
+            <li class="nav-item"><a class="nav-link text-white fs-5" href="#">Акції</a></li>
+            <li class="nav-item"><a class="nav-link text-white fs-5" href="#">Контакти</a></li>
+            <li class="nav-item mt-3">
+                <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#authModal" data-bs-dismiss="offcanvas">
+                    Увійти
+                </button>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slideshow (Bootstrap Carousel) (Критерій 3.2) -->
+    <section class="mb-5">
+        <div id="comicCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#comicCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#comicCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#comicCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <!-- Замість URL використовую плейсхолдер з акцентними кольорами -->
+                    <div class="d-flex align-items-center justify-content-center text-center" style="height: 380px; background-color: #333366;">
+                        <div class="p-4">
+                            <h5 class="text-warning display-4 fw-bold">АБСОЛЮТНІ НОВИНКИ</h5>
+                            <p class="text-white lead">Найгарячіші релізи тижня вже у Сховищі.</p>
+                            <a href="#" class="btn btn-lg btn-primary-custom mt-2">Переглянути</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                     <div class="d-flex align-items-center justify-content-center text-center" style="height: 380px; background-color: #1A1A33;">
+                        <div class="p-4">
+                            <h5 class="text-warning display-4 fw-bold">ЗНИЖКИ ДО 50%</h5>
+                            <p class="text-white lead">Класика жанру за спеціальними цінами.</p>
+                            <a href="#" class="btn btn-lg btn-primary-custom mt-2">До акцій</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                     <div class="d-flex align-items-center justify-content-center text-center" style="height: 380px; background-color: #0F0F2A;">
+                        <div class="p-4">
+                            <h5 class="text-warning display-4 fw-bold">МАНГА-СЕКЦІЯ</h5>
+                            <p class="text-white lead">Великий вибір японських коміксів.</p>
+                            <a href="#" class="btn btn-lg btn-primary-custom mt-2">Відкрити</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#comicCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Попередня</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#comicCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Наступна</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- НОВА СЕКЦІЯ: ГЕРОЙ ТА ЙОГО СЛОВА (Адаптивність) -->
+    <section class="container py-5 mb-5 comic-hero-section">
+        <div class="row hero-bubble-container">
+            <!-- 1. Зображення Героя -->
+            <div class="col-12 col-lg-6 mb-4 mb-lg-0 d-flex justify-content-center align-items-center">
+                <img src="https://placehold.co/400x400/FFD700/E30022?text=HERO+IMAGE" class="img-fluid rounded-circle border border-4 border-secondary" alt="Герой коміксів у дії" style="max-height: 300px;">
+            </div>
+            
+            <!-- 2. Бульбашка з мовою -->
+            <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="speech-bubble w-100">
+                    <p class="speech-bubble-text">
+                        "Я тут, щоб допомогти тобі знайти найкрутіші комікси у цій галактиці. ПОЧАЛИ!"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid (Семантика HTML5, Критерій 1.3, 2.1) -->
+    <main class="container mb-5">
+        <div class="row g-4">
+            
+            <!-- 1. Filter Section (Sidebar) (Критерій 1.3, 2.1) -->
+            <aside class="col-lg-3">
+                <div class="p-4 rounded-3 border border-danger bg-secondary shadow-lg">
+                    <h2 class="h4 fw-bold text-warning mb-4 border-bottom border-danger pb-2">Фільтр Коміксів</h2>
+                    
+                    <div class="accordion accordion-flush" id="filterAccordion">
+                        
+                        <!-- Ціновий Фільтр (Slider) -->
+                        <div class="accordion-item bg-secondary text-white border-0">
+                            <h3 class="accordion-header filter-group-header" id="headingPrice">
+                                <button class="accordion-button bg-secondary text-primary fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice" aria-expanded="true" aria-controls="collapsePrice">
+                                    Ціновий діапазон ($0 - <span id="current-price-max">100</span>)
+                                </button>
+                            </h3>
+                            <div id="collapsePrice" class="accordion-collapse collapse show" aria-labelledby="headingPrice" data-bs-parent="#filterAccordion">
+                                <div class="accordion-body pt-2">
+                                    <input type="range" id="price-range" name="price-range" min="0" max="100" value="100" class="form-range" oninput="document.getElementById('current-price-max').textContent = this.value;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Фільтр за Жанром (Collapse Component - Критерій 3.2) -->
+                        <div class="accordion-item bg-secondary text-white border-0">
+                            <h3 class="accordion-header filter-group-header" id="headingGenre">
+                                <button class="accordion-button collapsed bg-secondary text-primary fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGenre" aria-expanded="false" aria-controls="collapseGenre">
+                                    Жанр
+                                </button>
+                            </h3>
+                            <div id="collapseGenre" class="accordion-collapse collapse" aria-labelledby="headingGenre" data-bs-parent="#filterAccordion">
+                                <div class="accordion-body pt-2">
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="genre1"><label class="form-check-label" for="genre1">Супергероїка</label></div>
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="genre2"><label class="form-check-label" for="genre2">Фантастика/Фентезі</label></div>
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="genre3"><label class="form-check-label" for="genre3">Жахи</label></div>
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="genre4"><label class="form-check-label" for="genre4">Манга</label></div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Фільтр за Автором -->
+                        <div class="accordion-item bg-secondary text-white border-0">
+                            <h3 class="accordion-header filter-group-header" id="headingAuthor">
+                                <button class="accordion-button collapsed bg-secondary text-primary fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuthor" aria-expanded="false" aria-controls="collapseAuthor">
+                                    Автор / Художник
+                                </button>
+                            </h3>
+                            <div id="collapseAuthor" class="accordion-collapse collapse" aria-labelledby="headingAuthor" data-bs-parent="#filterAccordion">
+                                <div class="accordion-body pt-2">
+                                    <select class="form-select bg-dark text-white border-secondary">
+                                        <option value="">Усі творці</option>
+                                        <option value="moore">Алан Мур</option>
+                                        <option value="gaiman">Ніл Гейман</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Фільтр за Видавцем (Publisher) -->
+                        <div class="accordion-item bg-secondary text-white border-0">
+                            <h3 class="accordion-header filter-group-header" id="headingPublisher">
+                                <button class="accordion-button collapsed bg-secondary text-primary fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePublisher" aria-expanded="false" aria-controls="collapsePublisher">
+                                    Видавець
+                                </button>
+                            </h3>
+                            <div id="collapsePublisher" class="accordion-collapse collapse" aria-labelledby="headingPublisher" data-bs-parent="#filterAccordion">
+                                <div class="accordion-body pt-2">
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="pub1"><label class="form-check-label" for="pub1">DC Comics</label></div>
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="pub2"><label class="form-check-label" for="pub2">Marvel</label></div>
+                                    <div class="form-check"><input type="checkbox" class="form-check-input bg-dark border-secondary" id="pub3"><label class="form-check-label" for="pub3">Image Comics</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-lg btn-warning fw-bold w-100 mt-4 shadow-sm">ЗАСТОСУВАТИ ФІЛЬТРИ</button>
+                </div>
+            </aside>
+
+            <!-- 2. Books Placement (Main Content Area) (Критерій 1.3, 2.2, 3.4) -->
+            <section class="col-lg-9">
+                <div class="bg-light p-4 p-md-5 rounded-3 shadow-lg text-secondary">
+                    <h2 class="h3 fw-bold mb-4 border-bottom border-danger pb-2">Усі Комікси</h2>
+                    
+                    <!-- Книжкові картки (Bootstrap Cards) (Критерій 2.2) -->
+                    <div id="book-listings" class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+                        
+                        <!-- Картка 1 -->
+                        <div class="col">
+                            <div class="card card-comic h-100 overflow-hidden">
+                                <img src="https://placehold.co/400x600/333366/FFD700?text=COVER+1" class="card-img-top" alt="Обкладинка коміксу">
+                                <div class="card-body p-3">
+                                    <h5 class="card-title fw-bold">Вартові (Watchmen)</h5>
+                                    <p class="card-text text-muted small mb-1">Алан Мур</p>
+                                    <p class="h4 fw-bolder text-primary mb-3">12.99 $</p>
+                                    <button class="btn btn-sm btn-primary-custom w-100">Деталі</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Картка 2 -->
+                        <div class="col">
+                            <div class="card card-comic h-100 overflow-hidden">
+                                <img src="https://placehold.co/400x600/E30022/FFD700?text=COVER+2" class="card-img-top" alt="Обкладинка коміксу">
+                                <div class="card-body p-3">
+                                    <h5 class="card-title fw-bold">Пісочний Чоловік, Т. 1</h5>
+                                    <p class="card-text text-muted small mb-1">Ніл Гейман</p>
+                                    <p class="h4 fw-bolder text-primary mb-3">15.50 $</p>
+                                    <button class="btn btn-sm btn-primary-custom w-100">Деталі</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Картка 3 -->
+                        <div class="col">
+                            <div class="card card-comic h-100 overflow-hidden">
+                                <img src="https://placehold.co/400x600/222244/FFD700?text=COVER+3" class="card-img-top" alt="Обкладинка коміксу">
+                                <div class="card-body p-3">
+                                    <h5 class="card-title fw-bold">Бетмен: Рік Перший</h5>
+                                    <p class="card-text text-muted small mb-1">Френк Міллер</p>
+                                    <p class="h4 fw-bolder text-primary mb-3">9.99 $</p>
+                                    <button class="btn btn-sm btn-primary-custom w-100">Деталі</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Картка 4 -->
+                        <div class="col">
+                            <div class="card card-comic h-100 overflow-hidden">
+                                <img src="https://placehold.co/400x600/A0A0A0/222244?text=COVER+4" class="card-img-top" alt="Обкладинка коміксу">
+                                <div class="card-body p-3">
+                                    <h5 class="card-title fw-bold">Ходячі Мерці, Т. 1</h5>
+                                    <p class="card-text text-muted small mb-1">Роберт Кіркман</p>
+                                    <p class="h4 fw-bolder text-primary mb-3">8.75 $</p>
+                                    <button class="btn btn-sm btn-primary-custom w-100">Деталі</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ще 4 картки для повноти контенту -->
+                        <div class="col d-none d-md-block">...</div>
+                        <div class="col d-none d-md-block">...</div>
+                        <div class="col d-none d-lg-block">...</div>
+                        <div class="col d-none d-xl-block">...</div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+    <!-- Reviews Section (Секція 4 з 5) (Семантика HTML5, Критерій 3.4) -->
+    <section class="container py-5">
+        <h2 class="h3 fw-bold text-warning mb-5 text-center border-bottom border-warning pb-2">Відгуки Наших Клієнтів</h2>
+        <div class="row g-4">
+            <!-- Відгук 1 (Card) -->
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark text-white shadow-lg border-top border-4 border-danger">
+                    <div class="card-body">
+                        <p class="card-text fst-italic">"Найкращий вибір коміксів Золотого Віку, який я бачив онлайн. Швидка доставка та ідеальний стан!"</p>
+                    </div>
+                    <div class="card-footer bg-secondary border-0">
+                        <p class="mb-0 fw-semibold text-primary">— КолекціонерX99</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Відгук 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark text-white shadow-lg border-top border-4 border-danger">
+                    <div class="card-body">
+                        <p class="card-text fst-italic">"Інді-секція просто фантастична! Знайшов нового улюбленого художника завдяки їхній курації."</p>
+                    </div>
+                     <div class="card-footer bg-secondary border-0">
+                        <p class="mb-0 fw-semibold text-primary">— АртЛюбитель</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Відгук 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark text-white shadow-lg border-top border-4 border-danger">
+                    <div class="card-body">
+                        <p class="card-text fst-italic">"Система фільтрів дозволила знайти потрібну мені серію неймовірно легко. Рекомендую!"</p>
+                    </div>
+                     <div class="card-footer bg-secondary border-0">
+                        <p class="mb-0 fw-semibold text-primary">— СерійнийЧитач</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Секція 5 з 5) (Семантика HTML5, Критерій 3.4) -->
+    <footer class="bg-dark border-top border-4 border-warning text-white mt-5">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-6 col-md-3 mb-3">
+                    <h5 class="fw-bold text-warning mb-3">СХОВИЩЕ</h5>
+                    <ul class="list-unstyled small">
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Про нас</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Вакансії</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Локації магазинів</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Блог</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <h5 class="fw-bold text-warning mb-3">СЛУЖБА ПІДТРИМКИ</h5>
+                    <ul class="list-unstyled small">
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Зв'язатися з нами</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Доставка та повернення</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">FAQ</a></li>
+                        <li><a href="#" class="text-white text-decoration-none hover-primary">Умови обслуговування</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-5 offset-md-1">
+                    <h5 class="fw-bold text-warning mb-3">ПІДПИСКА</h5>
+                    <p class="small">Отримуйте останні новини та найкращі пропозиції коміксів!</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Ваш Email" aria-label="Ваш Email">
+                            <button class="btn btn-primary-custom" type="submit">Підписатись</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-3 small bg-black bg-opacity-50 border-top border-secondary">
+            &copy; 2025 The Comic Vault. Усі права захищені.
+        </div>
+    </footer>
+
+    <!-- Модальне Вікно Авторизації (Bootstrap Modal) (Критерій 3.1) -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-secondary text-white border border-warning">
+                <div class="modal-header border-bottom border-danger">
+                    <h5 class="modal-title text-warning fw-bold" id="authModalLabel">Увійти / Реєстрація</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Поле 1: Email -->
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label">Email адреса</label>
+                            <input type="email" class="form-control bg-dark text-white border-warning" id="inputEmail" aria-describedby="emailHelp" required>
+                        </div>
+                        <!-- Поле 2: Пароль -->
+                        <div class="mb-3">
+                            <label for="inputPassword" class="form-label">Пароль</label>
+                            <input type="password" class="form-control bg-dark text-white border-warning" id="inputPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input bg-dark border-warning" id="checkRemember">
+                            <label class="form-check-label" for="checkRemember">Запам'ятати мене</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-danger">
+                    <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Закрити</button>
+                    <button type="submit" class="btn btn-primary-custom">Увійти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS Bundle (для Carousel, Modal, Collapse) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>
